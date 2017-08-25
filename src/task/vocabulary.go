@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 )
 
+// VOCABULARY - путь к словарю:
 const VOCABULARY = "/../data/vocabulary.txt"
 
 func newVocabulary() (vWords []string, err error) {
