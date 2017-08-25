@@ -61,3 +61,5 @@ Your solution has to be fast in order for us to consider you for this role.
 You can test your solution with file 187 to make sure that:
  * your solution is correct (it should output 187)
  * it’s fast enough (it should run under 2 seconds in Go on your regular machine).
+
+![proof][./proof.png]
