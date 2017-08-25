@@ -1,10 +1,11 @@
 ## Description
-Your program will be given a list of accepted words (vocabulary.txt). For each word W in the input file,
-you must find word W' from the list of accepted words such that the number of changes from W to W' is minimized.
-It is possible that W is already W' and thus the number of changes necessary is zero.
+Your program will be given a list of accepted words (`/data/vocabulary.txt`).
+For each word **W** in the input file, you must find word **W'** from the list of accepted words such that
+the number of changes from **W** to **W'** is minimized.
+It is possible that **W** is already **W'** and thus the number of changes necessary is zero.
 A change is defined as replacing a single letter with another letter, adding a letter in any position,
-or removing a letter from any position. The total score that you need to output
-is the minimum number of changes necessary to make all words acceptable.
+or removing a letter from any position.
+The total score that you need to output is the minimum number of changes necessary to make all words acceptable.
 
 ## Input specification
 Your program must take a single string argument,
@@ -21,7 +22,7 @@ You are guaranteed that your program will run against well formed input files an
 list is identical to the one provided for testing.
 
 **Example input file:**
-Example input file located in `source/example_input`
+Example input file located in `/data/example_input`
 
 ```
 tihs sententcnes iss nout varrry goud
