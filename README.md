@@ -62,4 +62,6 @@ You can test your solution with file 187 to make sure that:
  * your solution is correct (it should output 187)
  * it’s fast enough (it should run under 2 seconds in Go on your regular machine).
 
-![proof][./proof.png]
+![proof](proof.png)
+
+Using [fuzzysearch](https://github.com/renstrom/fuzzysearch)
