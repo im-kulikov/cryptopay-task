@@ -29,6 +29,11 @@ func calculateDistance(i int) int {
 				continue
 			}
 
+			if wordDst == wordSrc {
+				distMin = 0
+				break
+			}
+
 			if dist := fuzzy.LevenshteinDistance(wordSrc, wordDst); dist < distMin {
 				distMin = dist
 			}
