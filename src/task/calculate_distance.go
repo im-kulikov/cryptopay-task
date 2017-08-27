@@ -6,12 +6,11 @@ import (
 	"fuzzy"
 )
 
-func calculateDistance(i int) int {
-	wordSrc := fWords[i]
-	distMin := len(wordSrc)
-	wordLen := len(wordSrc)
+func calculateDistance(word string) int {
+	distMin := len(word)
+	wordLen := len(word)
 
-	matches := fuzzy.RankFind(wordSrc, vWords)
+	matches := fuzzy.RankFind(word, vWords)
 
 	if len(matches) > 0 {
 		sort.Sort(matches)
@@ -29,12 +28,12 @@ func calculateDistance(i int) int {
 				continue
 			}
 
-			if wordDst == wordSrc {
+			if wordDst == word {
 				distMin = 0
 				break
 			}
 
-			if dist := fuzzy.LevenshteinDistance(wordSrc, wordDst); dist < distMin {
+			if dist := fuzzy.LevenshteinDistance(word, wordDst); dist < distMin {
 				distMin = dist
 			}
 

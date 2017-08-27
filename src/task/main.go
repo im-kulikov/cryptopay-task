@@ -8,7 +8,7 @@ import (
 var (
 	vWords    []string
 	vWordsLen int
-	fWords    []string
+	fWords    map[string]int
 	fWordsLen int
 )
 
@@ -17,7 +17,7 @@ func main() {
 		err error
 	)
 
-	//t := time.Now()
+	// t := time.Now()
 
 	// Если не предоставили входного файла:
 	if len(os.Args) < 2 {
@@ -63,10 +63,10 @@ func main() {
 
 	notify := make(chan int)
 
-	for i := 0; i < fWordsLen; i++ {
-		go func(j int) {
-			notify <- calculateDistance(j)
-		}(i)
+	for word, count := range fWords {
+		go func(word string, count int) {
+			notify <- calculateDistance(word) * count
+		}(word, count)
 
 		runtime.Gosched()
 	}
@@ -85,5 +85,5 @@ func main() {
 
 	println(distance)
 
-	//fmt.Printf("Spent: %s\n", time.Now().Sub(t))
+	// fmt.Printf("Spent: %s\n", time.Now().Sub(t))
 }

@@ -9,9 +9,11 @@ import (
 // На всякий случай, нам стоит
 var r = regexp.MustCompile(`[\s,.!?]+`)
 
-func readWords(fPath string) (words []string, err error) {
+func readWords(fPath string) (words map[string]int, err error) {
 	// Читаем файл целиком:
 	buf, err := ioutil.ReadFile(fPath)
+
+	words = make(map[string]int)
 
 	if err != nil {
 		return
@@ -23,7 +25,13 @@ func readWords(fPath string) (words []string, err error) {
 	buf = bytes.ToUpper(buf)
 
 	// Разбиваем по разделителям:
-	words = r.Split(string(buf), -1)
+	for _, word := range r.Split(string(buf), -1) {
+		if _, ok := words[word]; ok {
+			words[word]++
+		} else {
+			words[word] = 1
+		}
+	}
 
 	return
 }
