@@ -3,35 +3,36 @@ package main
 import (
 	"bytes"
 	"io/ioutil"
-	"regexp"
+	"log"
+	"os"
+	"strings"
 )
 
-// На всякий случай, нам стоит
-var r = regexp.MustCompile(`[\s,.!?]+`)
-
-func readWords(fPath string) (words map[string]int, err error) {
-	// Читаем файл целиком:
-	buf, err := ioutil.ReadFile(fPath)
-
-	words = make(map[string]int)
-
-	if err != nil {
-		return
+func readWords() {
+	if len(os.Args) < 2 {
+		log.Fatal("Error: no input file")
 	}
 
-	// Удаляем лишние пробелы:
-	buf = bytes.TrimSpace(buf)
+	// Читаем файл целиком:
+	buf, err := ioutil.ReadFile(os.Args[1])
+
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+
+	fWords = make(map[string]int)
+
 	// Возводим в верхний регистр:
 	buf = bytes.ToUpper(buf)
 
-	// Разбиваем по разделителям:
-	for _, word := range r.Split(string(buf), -1) {
-		if _, ok := words[word]; ok {
-			words[word]++
+	// Разбиваем строку по словам (https://golang.org/pkg/strings/#Fields):
+	for _, word := range strings.Fields(string(buf)) {
+		// Если слово уже есть - добавляем количество,
+		// иначе единица:
+		if _, ok := fWords[word]; ok {
+			fWords[word]++
 		} else {
-			words[word] = 1
+			fWords[word] = 1
 		}
 	}
-
-	return
 }

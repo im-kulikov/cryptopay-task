@@ -1,66 +1,39 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
-	"io"
-	"os"
+	"io/ioutil"
+	"log"
 	"path/filepath"
+	"strings"
 )
 
 // VOCABULARY - путь к словарю:
-const VOCABULARY = "/../data/vocabulary.txt"
+const VOCABULARY = "data/vocabulary.txt"
 
-func newVocabulary() (vWords []string, err error) {
+func readVocabulary() {
 	var (
-		vPath    string
-		basePath string
-		file     *os.File
-		part     []byte
-		prefix   bool
+		vPath string
 	)
 
-	// Получаем базовый путь:
-	basePath, err = filepath.Abs(filepath.Dir(os.Args[0]))
-
-	if err != nil {
-		return
-	}
-
 	// Получаем путь к словарю:
-	vPath, err = filepath.Abs(basePath + VOCABULARY)
+	vPath, _ = filepath.Abs(VOCABULARY)
+
+	buf, err := ioutil.ReadFile(vPath)
 
 	if err != nil {
-		return
+		log.Fatalf("Error: %s", err)
 	}
 
-	// Проверяем наличие файла:
-	if file, err = os.Open(vPath); err != nil {
-		return
-	}
+	vWords = make(map[int][]string)
 
-	reader := bufio.NewReader(file)
-	buffer := bytes.NewBuffer(make([]byte, 1024))
+	for _, word := range strings.Fields(string(buf)) {
+		wordLen := len(word)
 
-	// Читаем файл кусками:
-	for {
-
-		if part, prefix, err = reader.ReadLine(); err != nil {
-			break
+		if _, ok := fWords[word]; ok {
+			delete(fWords, word)
 		}
 
-		buffer.Write(part)
-
-		if !prefix {
-			vWords = append(vWords, buffer.String())
-			buffer.Reset()
-		}
-
-	}
-
-	// Игнорируем EOF:
-	if err == io.EOF {
-		err = nil
+		vWords[wordLen] = append(vWords[wordLen], word)
 	}
 
 	return

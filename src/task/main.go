@@ -1,74 +1,42 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"os"
-	"runtime"
+	"time"
 )
 
 var (
-	vWords    []string
-	vWordsLen int
-	fWords    map[string]int
-	fWordsLen int
+	vWords      map[int][]string
+	vWordsLen   int
+	fWords      map[string]int
+	fWordsByLen map[int][]string
+	fWordsLen   int
+	distance    int
+	notify      chan int
 )
 
 func main() {
-	var (
-		err error
-	)
-
-	// t := time.Now()
+	t := time.Now()
 
 	// Если не предоставили входного файла:
 	if len(os.Args) < 2 {
-		println("need input file")
-		os.Exit(0)
+		log.Fatal("need input file")
 	}
 
-	// Если входного файла не существует:
-	if _, err = os.Stat(os.Args[1]); os.IsNotExist(err) {
-		println("Error: input file not exists")
-		os.Exit(0)
-	}
-
-	// Читаем слова из входного файла:
-	if fWords, err = readWords(os.Args[1]); err != nil {
-		println("Error: ", err)
-		os.Exit(0)
-	}
+	// Читаем слова:
+	readWords()
+	// Читаем словарь:
+	readVocabulary()
 
 	fWordsLen = len(fWords)
 
-	// Если входной файл пуст:
-	if fWordsLen == 0 {
-		println("Error: the input file does not contain the words")
-		os.Exit(0)
-	}
-
-	// Читаем словарь:
-	if vWords, err = newVocabulary(); err != nil {
-		println("Error: ", err)
-		os.Exit(0)
-	}
-
-	vWordsLen = len(vWords)
-
-	// Если словарь пуст:
-	if vWordsLen == 0 {
-		println("Error: the vocabulary does not contain the words")
-		os.Exit(0)
-	}
-
-	distance := 0
-
-	notify := make(chan int)
+	// Канал размером <кол.слов> / 3:
+	notify = make(chan int)
 
 	for word, count := range fWords {
-		go func(word string, count int) {
-			notify <- calculateDistance(word) * count
-		}(word, count)
-
-		runtime.Gosched()
+		go getDistanceFast(word, count)
 	}
 
 	j := 0
@@ -85,5 +53,5 @@ func main() {
 
 	println(distance)
 
-	// fmt.Printf("Spent: %s\n", time.Now().Sub(t))
+	fmt.Printf("Spent: %s\n", time.Now().Sub(t))
 }

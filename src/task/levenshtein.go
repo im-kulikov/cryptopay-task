@@ -1,4 +1,4 @@
-package fuzzy
+package main
 
 // LevenshteinDistance measures the difference between two strings.
 // The Levenshtein distance between two words is the minimum number of
@@ -8,7 +8,7 @@ package fuzzy
 // This implemention is optimized to use O(min(m,n)) space and is based on the
 // optimized C version found here:
 // http://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Levenshtein_distance#C
-func LevenshteinDistance(s, t string) int {
+func levenshteinDistance(s, t string) int {
 	r1, r2 := []rune(s), []rune(t)
 	column := make([]int, len(r1)+1)
 
