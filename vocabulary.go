@@ -1,10 +1,10 @@
 package main
 
 import (
-	"io/ioutil"
+	"bufio"
 	"log"
+	"os"
 	"path/filepath"
-	"strings"
 )
 
 // VOCABULARY - путь к словарю:
@@ -18,15 +18,19 @@ func readVocabulary() {
 	// Получаем путь к словарю:
 	vPath, _ = filepath.Abs(VOCABULARY)
 
-	buf, err := ioutil.ReadFile(vPath)
+	//buf, err := ioutil.ReadFile(vPath)
 
+	buf, err := os.Open(vPath)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
 
 	vWords = make(map[int][]string)
 
-	for _, word := range strings.Fields(string(buf)) {
+	scanner := bufio.NewScanner(buf)
+
+	for scanner.Scan() {
+		word := scanner.Text()
 		wordLen := len(word)
 
 		if _, ok := fWords[word]; ok {

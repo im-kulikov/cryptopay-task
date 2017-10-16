@@ -15,7 +15,6 @@ func readWords() {
 
 	// Читаем файл целиком:
 	buf, err := ioutil.ReadFile(os.Args[1])
-
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}

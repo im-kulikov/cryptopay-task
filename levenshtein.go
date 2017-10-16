@@ -8,19 +8,28 @@ package main
 // This implemention is optimized to use O(min(m,n)) space and is based on the
 // optimized C version found here:
 // http://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Levenshtein_distance#C
-func levenshteinDistance(s, t string) int {
-	r1, r2 := []rune(s), []rune(t)
-	column := make([]int, len(r1)+1)
+func levenshteinDistance(r1, r2 string) int {
+	//r1, r2 := []rune(s), []rune(t)
+	var (
+		oldDiag  int
+		x        int
+		y        int
+		lastDiag int
+		lenR1    = len(r1)
+		lenR2    = len(r2)
+	)
 
-	for y := 1; y <= len(r1); y++ {
+	column := make([]int, lenR1+1)
+
+	for y = 1; y <= lenR1; y++ {
 		column[y] = y
 	}
 
-	for x := 1; x <= len(r2); x++ {
+	for x = 1; x <= lenR2; x++ {
 		column[0] = x
 
-		for y, lastDiag := 1, x-1; y <= len(r1); y++ {
-			oldDiag := column[y]
+		for y, lastDiag = 1, x-1; y <= lenR1; y++ {
+			oldDiag = column[y]
 			cost := 0
 			if r1[y-1] != r2[x-1] {
 				cost = 1

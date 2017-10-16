@@ -4,20 +4,22 @@ import (
 	"fmt"
 	"log"
 	"os"
+	_ "runtime/pprof"
 	"time"
+
+	"github.com/pkg/profile"
 )
 
 var (
-	vWords      map[int][]string
-	vWordsLen   int
-	fWords      map[string]int
-	fWordsByLen map[int][]string
-	fWordsLen   int
-	distance    int
-	notify      chan int
+	vWords    map[int][]string
+	fWords    map[string]int
+	fWordsLen int
+	distance  int
+	notify    chan int
 )
 
 func main() {
+	defer profile.Start(profile.CPUProfile).Stop()
 	t := time.Now()
 
 	// Если не предоставили входного файла:
@@ -33,7 +35,7 @@ func main() {
 	fWordsLen = len(fWords)
 
 	// Канал размером <кол.слов> / 3:
-	notify = make(chan int)
+	notify = make(chan int, fWordsLen/3)
 
 	for word, count := range fWords {
 		go getDistanceFast(word, count)

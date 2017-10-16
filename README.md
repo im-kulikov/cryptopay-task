@@ -1,3 +1,12 @@
+# About
+
+./data/187 -> 210-240ms
+
+
+![pprof.svg](cpu.svg)
+
+[pprof.pprof](cpu.pprof)
+
 ## Description
 Your program will be given a list of accepted words (`/data/vocabulary.txt`).
 For each word **W** in the input file, you must find word **W'** from the list of accepted words such that
@@ -61,5 +70,3 @@ Your solution has to be fast in order for us to consider you for this role.
 You can test your solution with file 187 to make sure that:
  * your solution is correct (it should output 187)
  * it’s fast enough (it should run under 2 seconds in Go on your regular machine).
-
-![proof](proof.png)
