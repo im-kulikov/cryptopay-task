@@ -1,11 +1,12 @@
 # About
 
-./data/187 -> 210-240ms
+task -file ./data/187 -> 210-240ms
 
+![pprof.svg](./github/cpu.svg)
 
-![pprof.svg](cpu.svg)
-
-[pprof.pprof](cpu.pprof)
+- [cpu.pprof](./github/cpu.pprof)
+- [mem.pprof](./github/mem.pprof)
+- [trace.out](./github/trace.out)
 
 ## Description
 Your program will be given a list of accepted words (`/data/vocabulary.txt`).
@@ -55,9 +56,9 @@ This score must be printed out as an integer and followed by a single new line.
 
 **Example Command:**
 
-`./bin/task data/example_input`
+`./bin/task -file data/example_input`
 OR
-`./bin/task data/187`
+`./bin/task -file data/187`
 
 **Example Output (newline after number):**
 

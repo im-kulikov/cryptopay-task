@@ -6,7 +6,11 @@ main: clean
 			go build \
 				-ldflags "-extldflags \"-static\"" \
 				-gcflags '-m' \
+				-gccgoflags '-O8' \
 				-o ./bin/task
+
+run: main
+	GOGC=off ./bin/task
 
 clean:
 	rm -rf ./bin/*

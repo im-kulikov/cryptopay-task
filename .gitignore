@@ -4,4 +4,5 @@
 .vscode
 pkg
 vendor
-bin
+bin/*
+!bin/.gitkeep
