@@ -5,3 +5,4 @@
 pkg
 bin/*
 !bin/.gitkeep
+!vendor
