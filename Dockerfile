@@ -1,19 +1,29 @@
 # Build image
-FROM golang:latest as builder
+FROM golang:alpine as builder
 
-ADD . /go/src/task
+COPY . /go/src/github.com/im-kulikov/cryptopay-task
+
+WORKDIR /go/src/github.com/im-kulikov/cryptopay-task
 
 RUN set -x \
-    && cd /go/src/task \
-    && go build -o /go/bin/task \
-        -ldflags "-extldflags \"-static\"" \
+    && export CGO_ENABLED="0" \
+    && export CGO_CFLAGS="-g -O9" \
+    && export CGO_CXXFLAGS="-g -O9" \
+    && export CGO_FFLAGS="-g -O9" \
+    && export CGO_LDFLAGS="-g -O9" \
+    && go build \
+        -ldflags "-w -s -extldflags \"-static\"" \
         -gcflags '-m' \
-    && chmod 1777 /go/bin/task
+        -gccgoflags '-O9' \
+        -v \
+        -o /go/bin/task
 
 # Executable image
 FROM scratch
 
+ENV GOGC=off
+
 COPY --from=builder /go/bin/task /task
-ADD ./data /data
+COPY --from=builder /go/src/github.com/im-kulikov/cryptopay-task/data /data
 
 CMD ["/task"]

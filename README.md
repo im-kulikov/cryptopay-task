@@ -1,6 +1,6 @@
 # About
 
-task -file ./data/187 -> 210-240ms
+./bin/task -file ./data/187 -> 210-240ms
 
 ![pprof.svg](./github/cpu.svg)
 
@@ -65,9 +65,13 @@ OR
 ```
 8
 ```
+OR
+```
+187
+```
 
 ## Programming Language and Efficiency
 Your solution has to be fast in order for us to consider you for this role.
 You can test your solution with file 187 to make sure that:
- * your solution is correct (it should output 187)
- * it’s fast enough (it should run under 2 seconds in Go on your regular machine).
+ * your solution is correct (it should output 187/22717)
+ * it’s fast enough (it should run under 2 seconds (2 minutes for 22717 file) in Go on your regular machine).

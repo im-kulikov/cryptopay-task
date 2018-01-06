@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	_ "runtime/pprof"
+	"strings"
 	"time"
 
 	"github.com/im-kulikov/cryptopay-task/internal"
@@ -12,9 +12,8 @@ import (
 )
 
 const (
-	//defaultFilename = "data/example_input"
 	//defaultFilename   = "data/187"
-	defaultFilename   = "data/187"
+	defaultFilename   = "data/example_input"
 	defaultVocabulary = "data/vocabulary.txt"
 )
 
@@ -24,29 +23,39 @@ var (
 	vocFile = flag.String("vocabulary", defaultVocabulary, "vocabulary file")
 )
 
+func spent(dt time.Time) {
+	fmt.Println("Spent: ", time.Since(dt))
+}
+
 func main() {
+	var (
+		err        error
+		notify     chan int
+		distance   int
+		index      int
+		size       = 30
+		words      = make(internal.Words)
+		vocabulary = make(internal.Vocabulary)
+	)
+
 	flag.Parse()
 
 	if *debug {
 		defer profile.Start(
 			profile.Quiet,
-			profile.TraceProfile,
+			//profile.TraceProfile,
 			//profile.MemProfile,
 			//profile.MemProfileRate(2048),
-			//profile.CPUProfile,
+			profile.CPUProfile,
 			profile.ProfilePath("./github"),
 		).Stop()
 	}
 
-	var (
-		err        error
-		words      internal.Words
-		vocabulary internal.Vocabulary
-		notify     chan int
-		distance   int
-		index      int
-		size       = 30
-	)
+	defer spent(time.Now())
+
+	defer func() {
+		fmt.Println("Distance:", distance)
+	}()
 
 	if _, err = os.Open(*file); err != nil || os.IsNotExist(err) {
 		fmt.Printf("%q not exists", *file)
@@ -58,13 +67,25 @@ func main() {
 		os.Exit(0)
 	}
 
-	t := time.Now()
-
-	if words, err = internal.ReadWords(*file); err != nil {
+	if err = internal.ReadFile(*file, func(word string) {
+		word = strings.ToUpper(word)
+		if _, ok := words[word]; ok {
+			words[word]++
+		} else {
+			words[word] = 1
+		}
+	}); err != nil {
 		panic(err)
 	}
 
-	if vocabulary, err = internal.ReadVocabulary(*vocFile, words); err != nil {
+	if err = internal.ReadFile(*vocFile, func(word string) {
+		word = strings.ToUpper(word)
+		if _, ok := words[word]; ok {
+			delete(words, word)
+		}
+		length := len(word)
+		vocabulary[length] = append(vocabulary[length], word)
+	}); err != nil {
 		panic(err)
 	}
 
@@ -74,7 +95,7 @@ func main() {
 		size = length
 	}
 
-	notify = make(chan int, size)
+	notify = make(chan int, size/3)
 
 	// internal/levenstein: 295.641957ms
 	// ------------------------------------
@@ -102,7 +123,4 @@ func main() {
 			close(notify)
 		}
 	}
-
-	fmt.Printf("Distance: %d\n", distance)
-	fmt.Printf("Spent: %s\n", time.Now().Sub(t))
 }

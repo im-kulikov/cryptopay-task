@@ -12,9 +12,7 @@ var (
 	levenshtein = levenshteinDistance
 )
 
-func SetLevenshtein(method func(r1, r2 string) int) {
-	levenshtein = method
-}
+//func SetLevenshtein(method func(r1, r2 string) int) { levenshtein = method }
 
 func levenshteinDistance(r1, r2 string) int {
 	var (
@@ -73,7 +71,7 @@ func levenshteinDistance(r1, r2 string) int {
 		}
 	}
 
-	return column[len(r1)]
+	return column[lenR1]
 }
 
 func min(a, b, c int) int {

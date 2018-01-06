@@ -1,35 +1,47 @@
 package internal
 
 import (
+	"bufio"
+	"io/ioutil"
 	"os"
 	"strings"
-	"text/scanner"
 )
 
 type Words = map[string]int
 
-func ReadWords(filename string) (words Words, err error) {
+type Handler func(word string)
+
+func readFile(filename string, handler Handler) (err error) {
 	var (
 		file *os.File
-		scan scanner.Scanner
+		scan *bufio.Scanner
 	)
-
 	if file, err = os.Open(filename); err != nil {
 		return
 	}
-
-	scan.Init(file)
-	words = make(Words)
-
-	for tok := scan.Scan(); tok != scanner.EOF; tok = scan.Scan() {
-		//fmt.Printf("%s: %s\n", scan.Position, scan.TokenText())
-		word := strings.ToUpper(scan.TokenText())
-		if _, ok := words[word]; ok {
-			words[word]++
-		} else {
-			words[word] = 1
-		}
+	scan = bufio.NewScanner(file)
+	scan.Split(bufio.ScanWords)
+	//buf := make([]byte, 0, 64*1024)
+	//scan.Buffer(buf, 1024*1024)
+	for scan.Scan() {
+		handler(scan.Text())
+		//parts := strings.Fields(line)
+		//
+		//for i := range parts {
+		//	handler(parts[i])
+		//}
 	}
+	err = scan.Err()
+	return
+}
 
+func ReadFile(filename string, handler Handler) (err error) {
+	var data []byte
+	if data, err = ioutil.ReadFile(filename); err != nil {
+		return
+	}
+	for _, word := range strings.Fields(string(data)) {
+		handler(word)
+	}
 	return
 }

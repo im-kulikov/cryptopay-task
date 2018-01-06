@@ -1,43 +1,36 @@
 package internal
 
-import (
-	"os"
-	"strings"
-	"text/scanner"
-)
-
 type Vocabulary map[int][]string
 
-func ReadVocabulary(filename string, words Words) (vocabulary Vocabulary, err error) {
+// Решение такое:
+// - берём длину слова:
+// - сначала проходим по схожей длине и вычисляем дистанцию по алгоритму Левенштейна
+// - если результат нам не подходит - идём по шагам (слева / справа)
+func (v Vocabulary) Distance(word string, count int, notify chan<- int) {
 	var (
-		file *os.File
-		scan scanner.Scanner
+		wordLen = len(word)
+		min     = wordLen
+		step    int
 	)
 
-	if file, err = os.Open(filename); err != nil {
-		return
-	}
-
-	scan.Init(file)
-	vocabulary = make(Vocabulary)
-
-	for tok := scan.Scan(); tok != scanner.EOF; tok = scan.Scan() {
-		word := strings.ToUpper(scan.TokenText())
-		if _, ok := words[word]; ok {
-			delete(words, word)
-			continue
+	for step = 0; min > step; step++ {
+		// Проверяем шаг вправо:
+		if dist := v.stepSearch(word, step, wordLen); dist == 1 {
+			notify <- count
+			return
+		} else if min > dist {
+			min = dist
 		}
-		length := len(word)
-		vocabulary[length] = append(vocabulary[length], word)
 	}
 
-	return
+	notify <- min * count
 }
 
-func (v Vocabulary) partSearch(word string, wordLen int) int {
+func (v Vocabulary) partSearch(words []string, word string, wordLen int) int {
 	distMin := wordLen
 
-	for _, s := range v[wordLen] {
+	for i := 0; i < len(words); i++ {
+		var s = words[i]
 		if dist := levenshtein(word, s); dist == 1 {
 			return 1
 		} else if distMin > dist {
@@ -48,10 +41,22 @@ func (v Vocabulary) partSearch(word string, wordLen int) int {
 	return distMin
 }
 
-func (v Vocabulary) stepSearch(word string, step int, wordLen int) int {
-	if _, ok := v[step]; !ok {
-		return wordLen
+func (v Vocabulary) stepSearch(word string, step, wordLen int) int {
+	var min = wordLen
+
+	if words, ok := v[wordLen+step]; ok {
+		if distMin := v.partSearch(words, word, wordLen); distMin < min {
+			min = distMin
+		}
 	}
 
-	return v.partSearch(word, step)
+	if step > 0 {
+		if words, ok := v[wordLen-step]; ok {
+			if distMin := v.partSearch(words, word, wordLen); distMin < min {
+				min = distMin
+			}
+		}
+	}
+
+	return min
 }
